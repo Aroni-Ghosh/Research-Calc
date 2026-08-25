@@ -13,19 +13,12 @@
             background: #f5f5f5;
             margin: 0;
             padding: 40px;
+            color: #222;
         }
 
         .container {
             max-width: 700px;
             margin: auto;
-        }
-
-        .calculator {
-            background: white;
-            padding: 30px;
-            margin-bottom: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         h1 {
@@ -35,6 +28,14 @@
 
         h2 {
             margin-top: 0;
+        }
+
+        .calculator {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.10);
         }
 
         label {
@@ -53,7 +54,7 @@
         button {
             width: 100%;
             padding: 12px;
-            margin-top: 18px;
+            margin-top: 20px;
             font-size: 16px;
             cursor: pointer;
         }
@@ -63,8 +64,8 @@
             padding: 15px;
             background: #f0f0f0;
             border-radius: 8px;
+            line-height: 1.7;
             text-align: center;
-            font-size: 18px;
         }
 
         .divider {
@@ -74,6 +75,7 @@
     </style>
 </head>
 
+
 <body>
 
 <div class="container">
@@ -81,13 +83,13 @@
     <h1>Research Calculators</h1>
 
 
-    <!-- ====================================== -->
-    <!-- Photon Energy Calculator -->
-    <!-- ====================================== -->
+    <!-- ============================================= -->
+    <!-- 1. PHOTON ENERGY CALCULATOR -->
+    <!-- ============================================= -->
 
     <div class="calculator">
 
-        <h2>Photon EEnergy Calculator</h2>
+        <h2>Photon Energy Calculator</h2>
 
         <label for="wavelength">
             Wavelength (nm)
@@ -98,30 +100,27 @@
             id="wavelength"
             value="470"
             step="any"
-            min="0"
         >
 
-        <button onclick="calculateEnergy()">
-            Calculate Photon Energy
+        <button onclick="calculatePhoton()">
+            Calculate
         </button>
 
-        <div class="result" id="energyResult">
-            Enter a wavelength and click Calculate.
+        <div class="result" id="photonResult">
+            Enter wavelength and click Calculate.
         </div>
 
     </div>
 
 
-    <!-- ====================================== -->
-    <!-- dBm Calculator -->
-    <!-- ====================================== -->
+
+    <!-- ============================================= -->
+    <!-- 2. dBm / POWER CALCULATOR -->
+    <!-- ============================================= -->
 
     <div class="calculator">
 
         <h2>dBm / Power Calculator</h2>
-
-
-        <!-- dBm to Power -->
 
         <label for="dbmInput">
             Power (dBm)
@@ -146,8 +145,6 @@
         <div class="divider"></div>
 
 
-        <!-- Power to dBm -->
-
         <label for="mwInput">
             Power (mW)
         </label>
@@ -157,7 +154,6 @@
             id="mwInput"
             value="1"
             step="any"
-            min="0"
         >
 
         <button onclick="powerToDbm()">
@@ -170,122 +166,393 @@
 
     </div>
 
+
+
+    <!-- ============================================= -->
+    <!-- 3. PHOTOCONDUCTIVITY YIELD -->
+    <!-- ============================================= -->
+
+    <div class="calculator">
+
+        <h2>Photoconductivity Yield</h2>
+
+        <label for="Idark">
+            Dark Current (µA)
+        </label>
+
+        <input
+            type="number"
+            id="Idark"
+            value="40"
+            step="any"
+        >
+
+
+        <label for="Iafter">
+            Current After Illumination (µA)
+        </label>
+
+        <input
+            type="number"
+            id="Iafter"
+            value="44"
+            step="any"
+        >
+
+
+        <button onclick="calculateYPC()">
+            Calculate YPC
+        </button>
+
+        <div class="result" id="ypcResult">
+            Enter dark and post-illumination current.
+        </div>
+
+    </div>
+
+
+
+    <!-- ============================================= -->
+    <!-- 4. DRAIN CURRENT DENSITY -->
+    <!-- ============================================= -->
+
+    <div class="calculator">
+
+        <h2>GaN HEMT Drain Current Density</h2>
+
+        <label for="Id">
+            Drain Current, Id (mA)
+        </label>
+
+        <input
+            type="number"
+            id="Id"
+            value="100"
+            step="any"
+        >
+
+
+        <label for="gateWidthJD">
+            Total Gate Width (µm)
+        </label>
+
+        <input
+            type="number"
+            id="gateWidthJD"
+            value="100"
+            step="any"
+        >
+
+
+        <button onclick="calculateJD()">
+            Calculate Current Density
+        </button>
+
+        <div class="result" id="jdResult">
+            Enter drain current and total gate width.
+        </div>
+
+    </div>
+
+
+
+    <!-- ============================================= -->
+    <!-- 5. NORMALIZED TRANSCONDUCTANCE -->
+    <!-- ============================================= -->
+
+    <div class="calculator">
+
+        <h2>Normalized Transconductance</h2>
+
+        <label for="gmInput">
+            Transconductance, gm (mS)
+        </label>
+
+        <input
+            type="number"
+            id="gmInput"
+            value="20"
+            step="any"
+        >
+
+
+        <label for="gateWidthGM">
+            Total Gate Width (µm)
+        </label>
+
+        <input
+            type="number"
+            id="gateWidthGM"
+            value="100"
+            step="any"
+        >
+
+
+        <button onclick="calculateGMNorm()">
+            Calculate gm,norm
+        </button>
+
+        <div class="result" id="gmResult">
+            Enter gm and total gate width.
+        </div>
+
+    </div>
+
 </div>
 
 
 <script>
 
-/* =========================================
-   Photon Energy Calculator
-========================================= */
+    /* =============================================
+       1. PHOTON ENERGY
+       ============================================= */
 
-function calculateEnergy() {
+    function calculatePhoton() {
 
-    const wavelength =
-        parseFloat(document.getElementById("wavelength").value);
+        const lambda =
+            parseFloat(document.getElementById("wavelength").value);
 
-    if (wavelength <= 0 || isNaN(wavelength)) {
+        if (lambda <= 0 || isNaN(lambda)) {
 
-        document.getElementById("energyResult").innerHTML =
-            "Please enter a valid wavelength.";
+            document.getElementById("photonResult").innerHTML =
+                "Please enter a valid wavelength.";
 
-        return;
+            return;
+        }
+
+        const h = 6.62607015e-34;
+        const c = 299792458;
+        const q = 1.602176634e-19;
+
+        const lambda_m = lambda * 1e-9;
+
+        const energy_J = h * c / lambda_m;
+        const energy_eV = energy_J / q;
+        const frequency_Hz = c / lambda_m;
+        const frequency_THz = frequency_Hz / 1e12;
+
+        document.getElementById("photonResult").innerHTML =
+
+            "<strong>Photon Energy</strong><br>" +
+
+            energy_eV.toFixed(4) + " eV<br>" +
+
+            energy_J.toExponential(4) + " J<br><br>" +
+
+            "<strong>Frequency</strong><br>" +
+
+            frequency_THz.toFixed(3) + " THz";
     }
 
-    const h = 6.62607015e-34;       // J·s
-    const c = 299792458;            // m/s
-    const q = 1.602176634e-19;      // J/eV
-
-    const wavelength_m =
-        wavelength * 1e-9;
-
-    const energy_J =
-        h * c / wavelength_m;
-
-    const energy_eV =
-        energy_J / q;
-
-    const frequency =
-        c / wavelength_m;
-
-    document.getElementById("energyResult").innerHTML =
-
-        "<strong>Photon Energy</strong><br><br>" +
-
-        energy_eV.toFixed(4) + " eV<br>" +
-
-        energy_J.toExponential(4) + " J<br><br>" +
-
-        "<strong>Frequency</strong><br>" +
-
-        (frequency / 1e12).toFixed(3) + " THz";
-}
 
 
-/* =========================================
-   dBm → Power
-========================================= */
+    /* =============================================
+       2A. dBm TO POWER
+       ============================================= */
 
-function dbmToPower() {
+    function dbmToPower() {
 
-    const dbm =
-        parseFloat(document.getElementById("dbmInput").value);
+        const dbm =
+            parseFloat(document.getElementById("dbmInput").value);
 
-    if (isNaN(dbm)) {
+        if (isNaN(dbm)) {
+
+            document.getElementById("dbmResult").innerHTML =
+                "Please enter a valid dBm value.";
+
+            return;
+        }
+
+        const power_mW =
+            Math.pow(10, dbm / 10);
+
+        const power_W =
+            power_mW / 1000;
+
+        const power_uW =
+            power_mW * 1000;
+
+        const power_nW =
+            power_mW * 1e6;
 
         document.getElementById("dbmResult").innerHTML =
-            "Please enter a valid dBm value.";
 
-        return;
+            "<strong>Power</strong><br>" +
+
+            power_W.toExponential(4) + " W<br>" +
+
+            power_mW.toExponential(4) + " mW<br>" +
+
+            power_uW.toExponential(4) + " µW<br>" +
+
+            power_nW.toExponential(4) + " nW";
     }
 
-    const power_mW =
-        Math.pow(10, dbm / 10);
-
-    const power_W =
-        power_mW / 1000;
-
-    const power_uW =
-        power_mW * 1000;
-
-    document.getElementById("dbmResult").innerHTML =
-
-        "<strong>Power</strong><br><br>" +
-
-        power_W.toExponential(4) + " W<br>" +
-
-        power_mW.toExponential(4) + " mW<br>" +
-
-        power_uW.toExponential(4) + " µW";
-}
 
 
-/* =========================================
-   Power → dBm
-========================================= */
+    /* =============================================
+       2B. POWER TO dBm
+       ============================================= */
 
-function powerToDbm() {
+    function powerToDbm() {
 
-    const power_mW =
-        parseFloat(document.getElementById("mwInput").value);
+        const power_mW =
+            parseFloat(document.getElementById("mwInput").value);
 
-    if (power_mW <= 0 || isNaN(power_mW)) {
+        if (power_mW <= 0 || isNaN(power_mW)) {
+
+            document.getElementById("powerResult").innerHTML =
+                "Power must be greater than zero.";
+
+            return;
+        }
+
+        const dbm =
+            10 * Math.log10(power_mW);
 
         document.getElementById("powerResult").innerHTML =
-            "Power must be greater than zero.";
 
-        return;
+            "<strong>Power</strong><br>" +
+
+            dbm.toFixed(4) + " dBm";
     }
 
-    const dbm =
-        10 * Math.log10(power_mW);
 
-    document.getElementById("powerResult").innerHTML =
 
-        "<strong>Power</strong><br><br>" +
+    /* =============================================
+       3. PHOTOCONDUCTIVITY YIELD
 
-        dbm.toFixed(4) + " dBm";
-}
+       YPC = (I_after - I_dark) / I_dark * 100
+       ============================================= */
+
+    function calculateYPC() {
+
+        const Idark =
+            parseFloat(document.getElementById("Idark").value);
+
+        const Iafter =
+            parseFloat(document.getElementById("Iafter").value);
+
+        if (
+            Idark === 0 ||
+            isNaN(Idark) ||
+            isNaN(Iafter)
+        ) {
+
+            document.getElementById("ypcResult").innerHTML =
+                "Please enter valid currents. Dark current cannot be zero.";
+
+            return;
+        }
+
+        const deltaI =
+            Iafter - Idark;
+
+        const YPC =
+            (deltaI / Idark) * 100;
+
+        document.getElementById("ypcResult").innerHTML =
+
+            "<strong>Change in Current, ΔI</strong><br>" +
+
+            deltaI.toFixed(4) + " µA<br><br>" +
+
+            "<strong>Photoconductivity Yield</strong><br>" +
+
+            YPC.toFixed(4) + " %";
+    }
+
+
+
+    /* =============================================
+       4. DRAIN CURRENT DENSITY
+
+       JD = ID / W
+       ============================================= */
+
+    function calculateJD() {
+
+        const Id_mA =
+            parseFloat(document.getElementById("Id").value);
+
+        const W_um =
+            parseFloat(document.getElementById("gateWidthJD").value);
+
+        if (
+            W_um <= 0 ||
+            isNaN(Id_mA) ||
+            isNaN(W_um)
+        ) {
+
+            document.getElementById("jdResult").innerHTML =
+                "Please enter valid values.";
+
+            return;
+        }
+
+        // Convert µm to mm
+        const W_mm =
+            W_um / 1000;
+
+        // mA/mm
+        const JD_mAmm =
+            Id_mA / W_mm;
+
+        // A/mm
+        const JD_Amm =
+            JD_mAmm / 1000;
+
+        document.getElementById("jdResult").innerHTML =
+
+            "<strong>Drain Current Density</strong><br>" +
+
+            JD_mAmm.toFixed(3) + " mA/mm<br>" +
+
+            JD_Amm.toFixed(4) + " A/mm";
+    }
+
+
+
+    /* =============================================
+       5. NORMALIZED TRANSCONDUCTANCE
+
+       gm,norm = gm / W
+       ============================================= */
+
+    function calculateGMNorm() {
+
+        const gm_mS =
+            parseFloat(document.getElementById("gmInput").value);
+
+        const W_um =
+            parseFloat(document.getElementById("gateWidthGM").value);
+
+        if (
+            W_um <= 0 ||
+            isNaN(gm_mS) ||
+            isNaN(W_um)
+        ) {
+
+            document.getElementById("gmResult").innerHTML =
+                "Please enter valid values.";
+
+            return;
+        }
+
+        // Convert µm to mm
+        const W_mm =
+            W_um / 1000;
+
+        // mS/mm
+        const gmNorm =
+            gm_mS / W_mm;
+
+        document.getElementById("gmResult").innerHTML =
+
+            "<strong>Normalized Transconductance</strong><br>" +
+
+            gmNorm.toFixed(4) + " mS/mm";
+    }
 
 </script>
 
